@@ -1,0 +1,5 @@
+services:
+  predictive-maintenance-api:
+    build: .
+    ports:
+      - "5000:5000"

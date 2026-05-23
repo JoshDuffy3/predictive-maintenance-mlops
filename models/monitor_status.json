@@ -1,0 +1,21 @@
+{
+  "monitoring_status": "completed",
+  "model_status": {
+    "metrics_found": true,
+    "metric_checked": "f1_score",
+    "f1_score": 0.6,
+    "acceptance_threshold": 0.5,
+    "model_accepted": true,
+    "retraining_required": false,
+    "accuracy": 0.98,
+    "precision": 0.9375,
+    "recall": 0.4412
+  },
+  "prediction_log_summary": {
+    "prediction_log_found": true,
+    "total_predictions": 9,
+    "average_failure_probability": 0.4328,
+    "high_risk_probability_threshold": 0.5,
+    "high_risk_predictions": 5
+  }
+}

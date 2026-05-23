@@ -1,0 +1,49 @@
+{
+  "evaluated_at_utc": "2026-05-23T23:40:34.598435+00:00",
+  "model_path": "C:\\Users\\Josh\\MLOPS\\predictive-maintenance-mlops\\models\\model.joblib",
+  "test_rows": 2000,
+  "accuracy": 0.98,
+  "precision": 0.9375,
+  "recall": 0.4411764705882353,
+  "f1_score": 0.6,
+  "acceptance_metric": "f1_score",
+  "acceptance_threshold": 0.5,
+  "model_accepted": true,
+  "confusion_matrix": [
+    [
+      1930,
+      2
+    ],
+    [
+      38,
+      30
+    ]
+  ],
+  "classification_report": {
+    "0": {
+      "precision": 0.9806910569105691,
+      "recall": 0.9989648033126294,
+      "f1-score": 0.9897435897435898,
+      "support": 1932.0
+    },
+    "1": {
+      "precision": 0.9375,
+      "recall": 0.4411764705882353,
+      "f1-score": 0.6,
+      "support": 68.0
+    },
+    "accuracy": 0.98,
+    "macro avg": {
+      "precision": 0.9590955284552846,
+      "recall": 0.7200706369504324,
+      "f1-score": 0.7948717948717949,
+      "support": 2000.0
+    },
+    "weighted avg": {
+      "precision": 0.9792225609756098,
+      "recall": 0.98,
+      "f1-score": 0.9764923076923077,
+      "support": 2000.0
+    }
+  }
+}

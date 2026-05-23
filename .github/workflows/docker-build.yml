@@ -1,0 +1,115 @@
+name: Docker Build and Publish
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - main
+    paths:
+      - "app/**"
+      - "src/**"
+      - "Dockerfile"
+      - "requirements.txt"
+      - ".github/workflows/docker-build.yml"
+
+jobs:
+  build-and-publish:
+    name: Train model, build Docker image and publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
+      - name: Install project dependencies
+        run: pip install -r requirements.txt
+
+      - name: Download dataset
+        run: python src/download_data.py
+
+      - name: Preprocess dataset
+        run: python src/preprocess.py
+
+      - name: Train model
+        run: python src/train.py
+
+      - name: Evaluate model
+        run: python src/evaluate.py
+
+      - name: Monitor model quality
+        run: python src/monitor.py
+
+      - name: Read model monitoring decision
+        id: model_decision
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          status_path = Path("models/monitor_status.json")
+
+          if not status_path.exists():
+              raise FileNotFoundError("models/monitor_status.json was not created.")
+
+          with open(status_path, "r", encoding="utf-8") as file:
+              status = json.load(file)
+
+          model_status = status["model_status"]
+          model_accepted = str(model_status["model_accepted"]).lower()
+          f1_score = model_status["f1_score"]
+          threshold = model_status["acceptance_threshold"]
+
+          print(f"Model accepted: {model_accepted}")
+          print(f"F1 score: {f1_score}")
+          print(f"Threshold: {threshold}")
+
+          with open("$GITHUB_OUTPUT", "a", encoding="utf-8") as output:
+              output.write(f"model_accepted={model_accepted}\n")
+              output.write(f"f1_score={f1_score}\n")
+              output.write(f"threshold={threshold}\n")
+          PY
+
+      - name: Stop if model did not pass threshold
+        if: steps.model_decision.outputs.model_accepted != 'true'
+        run: |
+          echo "Model did not meet the acceptance threshold."
+          echo "F1 score: ${{ steps.model_decision.outputs.f1_score }}"
+          echo "Threshold: ${{ steps.model_decision.outputs.threshold }}"
+          exit 1
+
+      - name: Log in to Docker Hub
+        if: steps.model_decision.outputs.model_accepted == 'true'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Build Docker image
+        if: steps.model_decision.outputs.model_accepted == 'true'
+        run: |
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/predictive-maintenance-api:latest .
+
+      - name: Push Docker image to Docker Hub
+        if: steps.model_decision.outputs.model_accepted == 'true'
+        run: |
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/predictive-maintenance-api:latest
+
+      - name: Upload Docker build artefacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-build-model-artefacts
+          path: |
+            models/model.joblib
+            models/metrics.json
+            models/evaluation_report.json
+            models/monitor_status.json
+            data/preprocessing_report.json

@@ -1,0 +1,27 @@
+{
+  "rows_before_cleaning": 10000,
+  "duplicates_before_cleaning": 0,
+  "missing_values_before_cleaning": {
+    "Type": 0,
+    "Air temperature [K]": 0,
+    "Process temperature [K]": 0,
+    "Rotational speed [rpm]": 0,
+    "Torque [Nm]": 0,
+    "Tool wear [min]": 0,
+    "Machine failure": 0
+  },
+  "rows_after_cleaning": 10000,
+  "missing_values_after_cleaning": {
+    "Type": 0,
+    "Air temperature [K]": 0,
+    "Process temperature [K]": 0,
+    "Rotational speed [rpm]": 0,
+    "Torque [Nm]": 0,
+    "Tool wear [min]": 0,
+    "Machine failure": 0
+  },
+  "target_distribution": {
+    "0": 9661,
+    "1": 339
+  }
+}
