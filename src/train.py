@@ -25,7 +25,7 @@ from preprocess import (
 
 # Minimum F1 score required before the model is considered acceptable.
 # This is used later by the monitoring/deployment workflow.
-MODEL_ACCEPTANCE_THRESHOLD = 0.30
+MODEL_ACCEPTANCE_THRESHOLD = 0.50
 
 
 def main() -> None:

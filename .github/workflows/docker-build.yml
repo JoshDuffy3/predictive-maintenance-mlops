@@ -48,11 +48,12 @@ jobs:
       - name: Monitor model quality
         run: python src/monitor.py
 
-      - name: Read model monitoring decision
+            - name: Read model monitoring decision
         id: model_decision
         run: |
           python - <<'PY'
           import json
+          import os
           from pathlib import Path
 
           status_path = Path("models/monitor_status.json")
@@ -64,15 +65,16 @@ jobs:
               status = json.load(file)
 
           model_status = status["model_status"]
-          model_accepted = str(model_status["model_accepted"]).lower()
-          f1_score = model_status["f1_score"]
-          threshold = model_status["acceptance_threshold"]
+
+          model_accepted = str(model_status.get("model_accepted", False)).lower()
+          f1_score = model_status.get("f1_score", 0)
+          threshold = model_status.get("acceptance_threshold", 0)
 
           print(f"Model accepted: {model_accepted}")
           print(f"F1 score: {f1_score}")
           print(f"Threshold: {threshold}")
 
-          with open("$GITHUB_OUTPUT", "a", encoding="utf-8") as output:
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
               output.write(f"model_accepted={model_accepted}\n")
               output.write(f"f1_score={f1_score}\n")
               output.write(f"threshold={threshold}\n")
