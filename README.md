@@ -4,19 +4,6 @@ This project predicts machine failure risk from sensor readings using a Random F
 The model is served through a Flask API.
 GitHub Actions automates testing, training, Docker image building, and deployment.
 
-## Use case
-
-The model predicts whether a machine is likely to fail based on sensor readings such as temperature, rotational speed, torque and tool wear.
-
-## MLOps stages covered
-
-- Data acquisition and preprocessing
-- Model training and testing
-- Flask API deployment
-- Continuous integration with GitHub Actions
-- Continuous training with scheduled GitHub Actions workflow
-- Basic monitoring through prediction logs
-- Docker containerisation
 
 ## Local setup
 
