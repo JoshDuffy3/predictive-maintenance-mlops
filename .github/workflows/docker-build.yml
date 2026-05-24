@@ -48,7 +48,7 @@ jobs:
       - name: Monitor model quality
         run: python src/monitor.py
 
-            - name: Read model monitoring decision
+      - name: Read model monitoring decision
         id: model_decision
         run: |
           python - <<'PY'
