@@ -1,0 +1,39 @@
+name: Deploy to Google VM
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy Docker container on Google VM
+    runs-on: self-hosted
+
+    steps:
+      - name: Log in to Docker Hub
+        run: |
+          echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
+      - name: Pull latest Docker image
+        run: |
+          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/predictive-maintenance-api:latest
+
+      - name: Stop old container if running
+        run: |
+          docker stop predictive-maintenance-api || true
+          docker rm predictive-maintenance-api || true
+
+      - name: Run new Flask API container
+        run: |
+          docker run -d \
+            --name predictive-maintenance-api \
+            -p 5000:5000 \
+            --restart unless-stopped \
+            ${{ secrets.DOCKER_HUB_USERNAME }}/predictive-maintenance-api:latest
+
+      - name: Check running containers
+        run: docker ps
+
+      - name: Health check deployed API
+        run: |
+          sleep 5
+          curl -f http://localhost:5000/health
